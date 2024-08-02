@@ -1,1 +1,1 @@
-# MindMap
+MindMap is a dynamic web application built with React, designed to facilitate intuitive mind mapping through an easy-to-use interface. The core component of the application orchestrates navigation and interaction within the app, seamlessly integrating with the MindMapEditor for creating and editing mind maps, and a Login component for user authentication. This project aims to provide a user-friendly platform for organizing thoughts, ideas, and projects effectively.
