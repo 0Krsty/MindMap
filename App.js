@@ -3,23 +3,26 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import MindMapEditor from './MindMapEditor';
 import Login from './Login';
 
-function MainApp() {
-  const API_URL = process.env.REACT_APP_API_URL;
+function ApplicationRouter() {
+  const mindMapApiUrl = process.env.REACT_APP_API_URL;
 
   return (
     <Router>
       <div>
         <Switch>
+          {/* Route to the Mind Map Editor Page */}
           <Route path="/mindmap">
-            <MindMapEditor apiUrl={API_URL} />
+            <MindMapEditor apiUrl={mindMapApiUrl} />
           </Route>
           
+          {/* Route to the Login Page */}
           <Route path="/login">
-            <Login apiUrl={API_URL} />
+            <Login apiUrl={mindMapApiUrl} />
           </Route>
           
+          {/* Default Route - Redirects to Login Page */}
           <Route path="/">
-            <Login apiUrl={API_URL} />
+            <Login apiUrl={mindMapApiUrl} />
           </Route>
         </Switch>
       </div>
@@ -27,4 +30,4 @@ function MainApp() {
   );
 }
 
-export default MainApp;
+export default ApplicationRouter;
