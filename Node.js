@@ -1,29 +1,15 @@
-import React from 'react';
+Promise.all([fetchNodeData(), fetchOtherData()]).then(([nodeData, otherData]) => {
+  // Process data here
+});
 
-class MindMapNode extends React.Component {
-  constructor(props) {
-    super(props);
+let cache = {};
+
+function fetchData(url) {
+  if (cache[url]) {
+    return Promise.resolve(cache[url]);
   }
-
-  render() {
-    const { content, position, customStyle } = this.props;
-
-    const defaultStyle = {
-      position: 'absolute',
-      top: `${position.y}px`,
-      left: `${position.x}px`,
-      padding: '10px',
-      backgroundColor: '#fff',
-      border: '1px solid #ddd',
-      borderRadius: '5px',
-      zIndex: 2,
-      ...customStyle,
-    };
-
-    return (
-      <div style={defaultStyle}>
-        {content}
-      </div>
-    );
-  }
+  return fetch(url).then(response => response.json()).then(data => {
+    cache[url] = data;
+    return data;
+  });
 }
