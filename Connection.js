@@ -1,37 +1,32 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Line } from 'react-konva';
-class MindMapConnection extends React.Component {
-  static propTypes = {
-    nodes: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        x: PropTypes.number.isRequired,
-        y: PropTypes.number.isRequired,
-      })
-    ).isRequired,
-    style: PropTypes.shape({
-      stroke: PropTypes.string,
-      strokeWidth: PropTypes.number,
-      lineCap: PropTypes.string,
-      lineJoin: PropTypes.string,
-      dash: PropTypes.arrayOf(PropTypes.number),
-    }),
-  };
-  static defaultProps = {
-    style: {
-      stroke: 'black',
-      strokeWidth: 2,
-      lineCap: 'round',
-      lineJoin: 'round',
-      dash: [],
-    },
-  };
-  render() {
-    const { nodes, style } = this.props;
-    if (nodes.length < 2) return null;
-    const points = nodes.reduce((acc, node) => [...acc, node.x, node.y], []);
-    return <Line points={points} {...style} />;
-  }
-}
-export default MindMapConnection;
+import React, { useState, useEffect } from 'react';
+import MindMapConnection from './MindMapConnection'; // Assuming this is the path to your component
+import axios from 'axios';
+
+const MindMapContainer = () => {
+    const [nodes, setNodes] = useState([]);
+
+    useEffect(() => {
+        // Check if nodes are in local storage or some cache mechanism
+        const cachedNodes = localStorage.getItem('nodes');
+        if (cachedNodes) {
+            setNodes(JSON.parse(cachedNodes));
+        } else {
+            fetchNodesData();
+        }
+    }, []);
+
+    const fetchNodesData = async () => {
+        try {
+            // Example API call
+            const response = await axios.get('https://yourapi.com/nodes');
+            setNodes(response.data);
+            // Cache the nodes data in local storage or preferred cache
+            localStorage.setItem('nodes', JSON.stringify(response.data));
+        } catch (error) {
+            console.error("Error fetching nodes data:", error);
+        }
+    };
+
+    return <MindMapConnection nodes={nodes} />;
+};
+export default MindMapContainer;
