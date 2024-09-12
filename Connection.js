@@ -6,22 +6,27 @@ const MindMapContainer = () => {
     const [nodes, setNodes] = useState([]);
 
     useEffect(() => {
-        // Check if nodes are in local storage or some cache mechanism
-        const cachedNodes = localStorage.getItem('nodes');
-        if (cachedNodes) {
-            setNodes(JSON.parse(cachedNodes));
-        } else {
-            fetchNodesData();
-        }
+        // Function to check and fetch nodes
+        const initNodes = async () => {
+            // Attempt to retrieve from local storage first
+            const cachedNodes = localStorage.getItem('nodes');
+            if (cachedNodes) {
+                setNodes(JSON.parse(cachedNodes));
+            } else {
+                await fetchNodesData();
+            }
+        };
+
+        // Initialize nodes on component mount
+        initNodes();
     }, []);
 
     const fetchNodesData = async () => {
         try {
-            // Example API call
             const response = await axios.get('https://yourapi.com/nodes');
-            setNodes(response.data);
-            // Cache the nodes data in local storage or preferred cache
-            localStorage.setItem('nodes', JSON.stringify(response.data));
+            const nodesData = response.data;
+            setNodes(nodesData);
+            localStorage.setItem('nodes', JSON.stringify(nodesData));
         } catch (error) {
             console.error("Error fetching nodes data:", error);
         }
@@ -29,4 +34,5 @@ const MindMapContainer = () => {
 
     return <MindMapConnection nodes={nodes} />;
 };
+
 export default MindMapContainer;
