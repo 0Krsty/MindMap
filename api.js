@@ -1,7 +1,10 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
+
 dotenv.config();
+
 const API_BASE_URL = process.env.API_BASE_URL;
+
 async function saveMindMap(mindMapData) {
   try {
     const response = await axios.post(`${API_BASE_URL}/mindmaps`, mindMapData, {
@@ -11,19 +14,21 @@ async function saveMindMap(mindMapData) {
     });
     return response.data;
   } catch (error) {
-    console.error('Error saving mind map:', error);
+    handleAxiosError(error, 'saving mind map');
     throw error;
   }
 }
+
 async function loadMindMap(mindMapId) {
   try {
     const response = await axios.get(`${API_BASE_URL}/mindmaps/${mindMapId}`);
     return response.data;
   } catch (error) {
-    console.error('Error loading mind map:', error);
+    handleAxiosError(error, 'loading mind map');
     throw error;
   }
 }
+
 async function startCollaboration(mindMapId) {
   try {
     const response = await axios.post(`${API_BASE_URL}/collaborate/start`, { mindMapId }, {
@@ -33,10 +38,11 @@ async function startCollaboration(mindMapId) {
     });
     return response.data;
   } catch (error) {
-    console.error('Error starting collaboration:', error);
+    handleAxiosError(error, 'starting collaboration');
     throw error;
   }
 }
+
 async function stopCollaboration(sessionId) {
   try {
     const response = await axios.post(`${API_BASE_URL}/collaborate/stop`, { sessionId }, {
@@ -46,8 +52,23 @@ async function stopCollaboration(sessionId) {
     });
     return response.data;
   } catch (error) {
-    console.error('Error stopping collaboration:', error);
+    handleAxiosError(error, 'stopping collaboration');
     throw error;
   }
 }
+
+function handleAxiosError(error, processName) {
+    if (error.response) {
+        console.error(`Error ${processName}: Server responded with status code ${error.response.status}`);
+        console.error('Response data:', error.response.data);
+        console.error('Response headers:', error.response.headers);
+    } else if (error.request) {
+        console.error(`Error ${processName}: No response received`);
+        console.error('Request:', error.request);
+    } else {
+        console.error(`Error ${processName}: Request setup failed`, error.message);
+    }
+    console.error('Error config:', error.config);
+}
+
 export { saveMindMap, loadMindMap, startCollaboration, stopCollaboration };
