@@ -71,4 +71,31 @@ function handleAxiosError(error, processName) {
     console.error('Error config:', error.config);
 }
 
-export { saveMindMap, loadMindMap, startCollaboration, stopCollaboration };
+function logDetailedError(error) {
+  console.error('Detailed error info:', JSON.stringify(error, null, 2));
+}
+
+async function axiosCallWrapper(method, url, data = {}, config = {}) {
+  try {
+    return await axios[method](url, data, config);
+  } catch (error) {
+    logDetailedError(error); 
+    throw error; 
+  }
+}
+
+async function saveMindMapEnhanced(mindMapData) {
+  try {
+    const response = await axiosCallWrapper('post', `${API_BASE_URL}/mindmaps`, mindMapData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    handleAxiosError(error, 'saving mind map');
+    throw error;
+  }
+}
+
+export { saveMindMap, loadMindMap, startCollaboration, stopCollaboration, saveMindMapEnhanced };
