@@ -3,99 +3,99 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const API_BASE_URL = process.env.API_BASE_URL;
+const BASE_URL = process.env.API_BASE_URL;
 
-async function saveMindMap(mindMapData) {
+async function uploadMindMap(mindMapData) {
   try {
-    const response = await axios.post(`${API_BASE_URL}/mindmaps`, mindMapData, {
+    const response = await axios.post(`${BASE_URL}/mindmaps`, mindMapData, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
     return response.data;
   } catch (error) {
-    handleAxiosError(error, 'saving mind map');
+    processAxiosError(error, 'uploading mind map');
     throw error;
   }
 }
 
-async function loadMindMap(mindMapId) {
+async function fetchMindMap(mindMapId) {
   try {
-    const response = await axios.get(`${API_BASE_URL}/mindmaps/${mindMapId}`);
+    const response = await axios.get(`${BASE_URL}/mindmaps/${mindMapId}`);
     return response.data;
   } catch (error) {
-    handleAxiosError(error, 'loading mind map');
+    processAxiosError(error, 'fetching mind map');
     throw error;
   }
 }
 
-async function startCollaboration(mindMapId) {
+async function initiateCollaboration(mindMapId) {
   try {
-    const response = await axios.post(`${API_BASE_URL}/collaborate/start`, { mindMapId }, {
+    const response = await axios.post(`${BASE_URL}/collaborate/start`, { mindMapId }, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
     return response.data;
   } catch (error) {
-    handleAxiosError(error, 'starting collaboration');
+    processAxiosError(error, 'initiating collaboration');
     throw error;
   }
 }
 
-async function stopCollaboration(sessionId) {
+async function endCollaboration(sessionId) {
   try {
-    const response = await axios.post(`${API_BASE_URL}/collaborate/stop`, { sessionId }, {
+    const response = await axios.post(`${BASE_URL}/collaborate/stop`, { sessionId }, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
     return response.data;
   } catch (error) {
-    handleAxiosError(error, 'stopping collaboration');
+    processAxiosError(error, 'ending collaboration');
     throw error;
   }
 }
 
-function handleAxiosError(error, processName) {
+function processAxiosError(error, processName) {
     if (error.response) {
-        console.error(`Error ${processName}: Server responded with status code ${error.response.status}`);
+        console.error(`Error during ${processName}: Server responded with status code ${error.response.status}`);
         console.error('Response data:', error.response.data);
         console.error('Response headers:', error.response.headers);
     } else if (error.request) {
-        console.error(`Error ${processName}: No response received`);
-        console.error('Request:', error.request);
+        console.error(`Error during ${processName}: No response received`);
+        console.error('Request details:', error.request);
     } else {
-        console.error(`Error ${processName}: Request setup failed`, error.message);
+        console.error(`Error during ${processName}: Request setup failed`, error.message);
     }
-    console.error('Error config:', error.config);
+    console.error('Error configuration:', error.config);
 }
 
-function logDetailedError(error) {
-  console.error('Detailed error info:', JSON.stringify(error, null, 2));
+function logErrorDetails(error) {
+  console.error('Detailed error information:', JSON.stringify(error, null, 2));
 }
 
-async function axiosCallWrapper(method, url, data = {}, config = {}) {
+async function performAxiosRequest(method, url, data = {}, config = {}) {
   try {
     return await axios[method](url, data, config);
   } catch (error) {
-    logDetailedError(error); 
+    logErrorDetails(error); 
     throw error; 
   }
 }
 
-async function saveMindMapEnhanced(mindMapData) {
+async function uploadMindMapEnhanced(mindMapData) {
   try {
-    const response = await axiosCallWrapper('post', `${API_BASE_URL}/mindmaps`, mindMapData, {
+    const response = await performAxiosRequest('post', `${BASE_URL}/mindmaps`, mindMapData, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
     return response.data;
   } catch (error) {
-    handleAxiosError(error, 'saving mind map');
+    processAxiosError(error, 'uploading enhanced mind map');
     throw error;
   }
 }
 
-export { saveMindMap, loadMindMap, startCollaboration, stopCollaboration, saveMindMapEnhanced };
+export { uploadMindMap as saveMindMap, fetchMindMap as loadMindMap, initiateCollaboration as startCollaboration, endCollaboration as stopCollaboration, uploadMindMapEnhanced as saveMindMapEnhanced };
