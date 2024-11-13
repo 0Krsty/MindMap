@@ -6,9 +6,20 @@ dotenv.config();
 
 const usersDb = {};
 
+const cache = {
+  hashPassword: {},
+  generateToken: {},
+  validatePassword: {}
+};
+
 const hashPassword = async (password) => {
+  if (cache.hashPassword[password]) {
+    return cache.hashPassword[password];
+  }
   const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
+  const hash = await bcrypt.hash(password, salt);
+  cache.hashPassword[password] = hash;
+  return hash;
 };
 
 const validatePassword = async (password, hash) => {
@@ -16,7 +27,12 @@ const validatePassword = async (password, hash) => {
 };
 
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  if (cache.generateToken[userId]) {
+    return cache.generateToken[userId];
+  }
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  cache.generateToken[userId] = token;
+  return token;
 };
 
 const registerUser = async (username, password) => {
